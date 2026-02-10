@@ -12,8 +12,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final Map<String, User> users = new HashMap<>();
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public void registerUser(String username, String password) {
-        users.put(username, new User(username, passwordEncoder.encode(password)));
+    public void registerUser(String username, String password, String role) {
+        users.put(username, new User(username, passwordEncoder.encode(password), role));
     }
 
     @Override
@@ -21,6 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = users.get(username);
         if (user == null) throw new UsernameNotFoundException("User not found");
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
-                .password(user.getPassword()).authorities("USER").build();
+                .password(user.getPassword()).authorities(user.getRole()).build();
     }
 }

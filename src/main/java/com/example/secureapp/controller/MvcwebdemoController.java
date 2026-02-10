@@ -1,42 +1,47 @@
 package com.example.secureapp.controller; 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model; 
-import org.springframework.validation.BindingResult; 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import jakarta.validation.Valid; 
 
-import com.example.secureapp.model.RegistrationForm; 
+import com.example.secureapp.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication; 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MvcwebdemoController {
 
-    @GetMapping("/")
-    public String home() {
-        return "index";
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
 
-    @GetMapping("/registration")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("registrationForm", new RegistrationForm()); 
-        return "registration";
+    @GetMapping("/register")
+    public String register() {
+        return "register";
     }
 
     @PostMapping("/register")
-    public String register(@Valid RegistrationForm registrationForm, 
-                         BindingResult bindingResult, 
-                         Model model) {
-        
-        if (bindingResult.hasErrors()) {
-            return "registration";
-        }
+    public String registerUser(@RequestParam String username, 
+                               @RequestParam String password, 
+                               @RequestParam String role) {
+        userDetailsService.registerUser(username, password, role);
+        return "redirect:/login"; 
+    }
 
-        model.addAttribute("firstName", registrationForm.getFirstName());
-        model.addAttribute("lastName", registrationForm.getLastName());
-        model.addAttribute("country", registrationForm.getCountry());
-        model.addAttribute("dob", registrationForm.getDob());
-        model.addAttribute("email", registrationForm.getEmail());
+    @GetMapping("/home")
+    public String home(Authentication authentication, Model model) {
+        model.addAttribute("username", authentication.getName());
+        String role = authentication.getAuthorities().toString();
         
-        return "success";
+        if (role.contains("ROLE_ADMIN")) {
+            return "admin"; // ถ้าเป็น Admin ส่งไปหน้า admin.html
+        } else if (role.contains("ROLE_STAFF")) {
+            return "viewer"; // ถ้าเป็น Staff ส่งไปหน้า viewer.html
+        }
+        
+        return "index";
     }
 }
