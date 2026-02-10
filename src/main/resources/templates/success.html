@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="form-container">
+        <h1>Registration Successful!</h1>
+        <p>Thank you for registering. Here are your details:</p>
+        <ul>
+            <li><strong>First Name:</strong> <span th:text="${firstName}"></span></li>
+            <li><strong>Last Name:</strong> <span th:text="${lastName}"></span></li>
+            <li><strong>Country:</strong> <span th:text="${country.toUpperCase()}"></span></li>
+            <li><strong>Date of Birth:</strong> <span th:text="${dob}"></span></li>
+            <li><strong>Email:</strong> <span th:text="${email}"></span></li>
+        </ul>
+        <a th:href="@{/}">Back to Home</a>
+    </div>
+</body>
+</html>
